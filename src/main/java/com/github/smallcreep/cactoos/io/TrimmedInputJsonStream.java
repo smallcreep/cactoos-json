@@ -38,23 +38,32 @@ public final class TrimmedInputJsonStream extends InputStream {
 
     private final AtomicBoolean opened;
 
+    private final AtomicBoolean solidos;
+
     public TrimmedInputJsonStream(final InputStream stream) {
         this.stream = stream;
         this.opened = new AtomicBoolean(false);
+        this.solidos = new AtomicBoolean(false);
     }
 
     @Override
     public int read() throws IOException {
         int value = this.stream.read();
+        final boolean sol = this.solidos.get();
+        this.solidos.set(false);
+        if (this.opened.get()) {
+            if (value == '\\') {
+                this.solidos.set(!sol);
+            }
+        }
         if (!this.opened.get()) {
             while (value == ' ' || value == '\t' || value == '\n' || value == '\r') {
                 value = this.stream.read();
             }
         }
-        if (value == '"') {
+        if (value == '"' && !sol) {
             this.opened.set(!this.opened.get());
         }
-
         return value;
     }
 

@@ -44,12 +44,12 @@ public class TrimmedInputJsonStreamTest {
                 new TrimmedInputJsonStream(
                     new InputStreamOf(
                         new TextOf(
-                            " \t\r\n{ \"tri mmed\":\n\"value\"\t}\r"
+                            " \t\r\n{ \"tri \\\"mmed\":\n\"value\"\t}\r"
                         )
                     )
                 )
             ),
-            new TextHasString(Matchers.equalTo("{\"tri mmed\":\"value\"}"))
+            new TextHasString(Matchers.equalTo("{\"tri \\\"mmed\":\"value\"}"))
         );
     }
 }

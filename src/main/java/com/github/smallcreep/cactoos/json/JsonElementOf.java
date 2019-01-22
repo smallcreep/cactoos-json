@@ -28,11 +28,8 @@ import com.github.smallcreep.cactoos.Json;
 import com.github.smallcreep.cactoos.JsonElement;
 import com.github.smallcreep.cactoos.JsonObject;
 import com.github.smallcreep.cactoos.JsonValue;
+import com.github.smallcreep.cactoos.io.TrimmedInputJsonStream;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.cactoos.Input;
 import org.cactoos.io.InputOf;
 import org.cactoos.text.FormattedText;
 import org.cactoos.text.ReplacedText;
@@ -56,7 +53,13 @@ public class JsonElementOf implements JsonElement {
 
     public JsonElementOf(final JsonObject object, final String key) throws Exception {
         this(
-            JsonElementOf.jsonFromJsonObject(object),
+            new JsonOf(
+                new InputOf(
+                    new TrimmedInputJsonStream(
+                        object.stream()
+                    )
+                )
+            ),
             key
         );
     }
@@ -92,21 +95,6 @@ public class JsonElementOf implements JsonElement {
                         ""
                     )
                 )
-            )
-        );
-    }
-
-    private static Json jsonFromJsonObject(final JsonObject object) throws Exception {
-        Input input = object;
-        final InputStream stream = input.stream();
-        int value = stream.read();
-        while (value > -1 /*&& (value == ' ' || value == '{')*/) {
-            System.out.println(value);
-            value = stream.read();
-        }
-        return new JsonOf(
-            new InputOf(
-                stream
             )
         );
     }
